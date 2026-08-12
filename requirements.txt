@@ -4,6 +4,6 @@ numpy
 pandas
 scikit-learn
 joblib
-mediapipe==0.10.35
+mediapipe==0.10.32
 opencv-contrib-python-headless
 Pillow
