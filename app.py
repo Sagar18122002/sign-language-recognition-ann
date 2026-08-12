@@ -116,16 +116,82 @@ if option == "Upload Image":
 
         # Read image
         image = Image.open(uploaded_file).convert("RGB")
+if option == "Upload Image":
+
+    st.subheader("📷 Upload a Hand Image")
+
+    uploaded_file = st.file_uploader(
+        "Choose an image",
+        type=["jpg", "jpeg", "png"]
+    )
+
+    if uploaded_file is not None:
+
+        image = Image.open(uploaded_file).convert("RGB")
 
         rgb_image = np.array(image)
-        
+
         st.image(
             rgb_image,
             caption="Uploaded Image",
             use_container_width=True
         )
 
-        # Convert to MediaPipe image
+        mp_image = mp.Image(
+            image_format=mp.ImageFormat.SRGB,
+            data=rgb_image
+        )
+
+        result = detector.detect(mp_image)
+
+        if result.hand_landmarks:
+
+            hand = result.hand_landmarks[0]
+
+            features = extract_features(hand)
+
+            if len(features) == 63:
+
+                label, confidence = predict_sign(features)
+
+                st.success(
+                    f"Predicted Sign: **{label}**"
+                )
+
+                st.metric(
+                    "Confidence",
+                    f"{confidence * 100:.2f}%"
+                )
+
+        else:
+
+            st.warning(
+                "No hand detected. Please upload a clear hand image."
+            )
+elif option == "Webcam":
+
+    st.subheader("📸 Take a Picture Using Webcam")
+
+    camera_image = st.camera_input(
+        "Show your hand to the camera"
+    )
+
+    if camera_image is not None:
+
+        # Read captured image using PIL
+        image = Image.open(camera_image).convert("RGB")
+
+        # Convert PIL image to NumPy
+        rgb_image = np.array(image)
+
+        # Display captured image
+        st.image(
+            rgb_image,
+            caption="Captured Image",
+            use_container_width=True
+        )
+
+        # Convert image to MediaPipe format
         mp_image = mp.Image(
             image_format=mp.ImageFormat.SRGB,
             data=rgb_image
@@ -143,6 +209,7 @@ if option == "Upload Image":
 
             if len(features) == 63:
 
+                # Predict
                 label, confidence = predict_sign(
                     features
                 )
@@ -159,64 +226,5 @@ if option == "Upload Image":
         else:
 
             st.warning(
-                "No hand detected. "
-                "Please upload a clear image of a hand."
-            )
-elif option == "Webcam":
-
-    st.subheader("📸 Take a Picture Using Webcam")
-
-    camera_image = st.camera_input(
-        "Show your hand to the camera"
-    )
-
-    if camera_image is not None:
-
-        # Read image
-        image = Image.open(uploaded_file).convert("RGB")
-
-        rgb_image = np.array(image)
-
-        # Display image
-        st.image(
-            rgb_image,
-            caption="Captured Image",
-            use_container_width=True
-        )
-
-        # MediaPipe image
-        mp_image = mp.Image(
-            image_format=mp.ImageFormat.SRGB,
-            data=rgb_image
-        )
-
-        # Detect hand
-        result = detector.detect(mp_image)
-
-        if result.hand_landmarks:
-
-            hand = result.hand_landmarks[0]
-
-            # Extract features
-            features = extract_features(hand)
-
-            if len(features) == 63:
-
-                label, confidence = predict_sign(
-                    features
-                )
-
-                st.success(
-                    f"Predicted Sign: **{label}**"
-                )
-
-                st.metric(
-                    "Confidence",
-                    f"{confidence * 100:.2f}%"
-                )
-
-        else:
-
-            st.warning(
-                "No hand detected."
+                "No hand detected. Please show your hand clearly."
             )
