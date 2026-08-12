@@ -1,10 +1,10 @@
 import streamlit as st
 import numpy as np
-import cv2
 import joblib
 import tensorflow as tf
 import mediapipe as mp
 
+from PIL import Image
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 
@@ -115,22 +115,10 @@ if option == "Upload Image":
     if uploaded_file is not None:
 
         # Read image
-        file_bytes = np.asarray(
-            bytearray(uploaded_file.read()),
-            dtype=np.uint8
-        )
+        image = Image.open(uploaded_file).convert("RGB")
 
-        image = cv2.imdecode(
-            file_bytes,
-            cv2.IMREAD_COLOR
-        )
-
-        # Convert BGR → RGB
-        rgb_image = cv2.cvtColor(
-            image,
-            cv2.COLOR_BGR2RGB
-        )
-
+        rgb_image = np.array(image)
+        
         st.image(
             rgb_image,
             caption="Uploaded Image",
