@@ -173,21 +173,9 @@ elif option == "Webcam":
     if camera_image is not None:
 
         # Read image
-        file_bytes = np.asarray(
-            bytearray(camera_image.read()),
-            dtype=np.uint8
-        )
+        image = Image.open(uploaded_file).convert("RGB")
 
-        image = cv2.imdecode(
-            file_bytes,
-            cv2.IMREAD_COLOR
-        )
-
-        # BGR → RGB
-        rgb_image = cv2.cvtColor(
-            image,
-            cv2.COLOR_BGR2RGB
-        )
+        rgb_image = np.array(image)
 
         # Display image
         st.image(
