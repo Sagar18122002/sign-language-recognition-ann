@@ -1,8 +1,8 @@
 streamlit==1.58.0
 tensorflow==2.21.0
-numpy==2.4.6
-pandas==2.3.3
-scikit-learn==1.6.1
-joblib==1.5.3
-opencv-python-headless==4.13.0.92
-mediapipe==1.0.0
+numpy
+pandas
+scikit-learn
+joblib
+opencv-python-headless
+mediapipe
